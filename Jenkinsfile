@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'    // Use your Maven tool name in Jenkins        // Use your configured JDK
+        maven 'maven-3.8.8'  // Change to your actual Maven tool name
+        jdk 'jdk8'           // Change to your configured JDK name
     }
 
     environment {
@@ -12,19 +13,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // If you're using Git, Jenkins will automatically check out the source
                 checkout scm
             }
         }
 
         stage('Build') {
             steps {
+                echo 'Building the application...'
                 sh 'mvn clean package'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
@@ -33,28 +35,24 @@ pipeline {
             steps {
                 script {
                     if (fileExists(env.APP_JAR)) {
+                        echo "Running application JAR: ${env.APP_JAR}"
                         sh "java -jar ${env.APP_JAR}"
                     } else {
+                        echo "Available JARs:"
+                        sh 'ls -lh target/*.jar || echo "No JARs found."'
                         error "JAR file not found: ${env.APP_JAR}"
                     }
                 }
             }
         }
-
-        // Optional: stage to push code back to Git or deploy artifact
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Deploying application or pushing artifacts...'
-        //     }
-        // }
     }
 
     post {
         success {
-            echo 'Build and run successful!'
+            echo '✅ Build and run successful!'
         }
         failure {
-            echo 'Build failed!'
+            echo '❌ Build failed or JAR missing.'
         }
     }
 }
