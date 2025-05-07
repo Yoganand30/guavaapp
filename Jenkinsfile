@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven'  // Change to your actual Maven tool name
-               // Change to your configured JDK name
+    // Change to your configured JDK name
     }
 
     environment {
@@ -20,14 +20,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                sh 'mvn clean package'
+                sh 'mvn clean install -DskipTests'  // Install all dependencies and skip tests
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running unit tests...'
-                sh 'mvn test'
+                sh 'mvn test'  // Run tests after build
             }
         }
 
@@ -38,7 +38,7 @@ pipeline {
                         echo "Running application JAR: ${env.APP_JAR}"
                         sh "java -jar ${env.APP_JAR}"
                     } else {
-                        echo "Available JARs:"
+                        echo "No JAR found in target directory."
                         sh 'ls -lh target/*.jar || echo "No JARs found."'
                         error "JAR file not found: ${env.APP_JAR}"
                     }
