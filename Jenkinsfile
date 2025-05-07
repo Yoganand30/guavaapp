@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven-3.8.8'  // Change to your actual Maven tool name
-        jdk 'jdk8'           // Change to your configured JDK name
+        maven 'Maven'  // Change to your actual Maven tool name
+               // Change to your configured JDK name
     }
 
     environment {
