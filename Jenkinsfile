@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        APP_JAR = "target/MyMavenGuavaApp-1.0-SNAPSHOT-shaded.jar"
+        APP_JAR = "target/MyMavenGuavaApp-1.0-SNAPSHOT.jar"
     }
 
     stages {
