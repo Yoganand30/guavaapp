@@ -1,58 +1,36 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'  // Change to your actual Maven tool name
-    // Change to your configured JDK name
-    }
-
-    environment {
-        APP_JAR = "target/MyMavenGuavaApp-1.0-SNAPSHOT.jar"
+    tools {         // Use the tool names you configured in Jenkins
+        maven 'Maven'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                git branch: 'master', url: 'https://github.com/Yoganand30/guavaapp.git'
             }
         }
 
-        stage('Build') {
+        stage('Build Project') {
             steps {
-                echo 'Building the application...'
-                sh 'mvn clean install -DskipTests'  // Install all dependencies and skip tests
+                sh 'mvn clean install'
             }
         }
 
-        stage('Test') {
+        stage('Run Application') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'  // Run tests after build
-            }
-        }
-
-        stage('Run App') {
-            steps {
-                script {
-                    if (fileExists(env.APP_JAR)) {
-                        echo "Running application JAR: ${env.APP_JAR}"
-                        sh "java -jar ${env.APP_JAR}"
-                    } else {
-                        echo "No JAR found in target directory."
-                        sh 'ls -lh target/*.jar || echo "No JARs found."'
-                        error "JAR file not found: ${env.APP_JAR}"
-                    }
-                }
+                sh 'mvn exec:java -Dexec.mainClass="com.example.App"'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build and run successful!'
+            echo '✅ Build and execution successful!'
         }
         failure {
-            echo '❌ Build failed or JAR missing.'
+            echo '❌ Build failed!'
         }
     }
 }
